@@ -1,0 +1,137 @@
+.resolve-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.resolve-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--clr-primary-50);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--clr-primary-100);
+}
+
+.resolve-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--clr-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.resolve-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--clr-text);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.form-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--clr-text);
+}
+
+.form-textarea {
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color var(--transition-fast);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+}
+
+.form-textarea:focus {
+  border-color: var(--clr-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.upload-area {
+  border: 2px dashed var(--clr-border);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--transition-fast);
+}
+
+.upload-area:hover {
+  border-color: var(--clr-primary-light);
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-8) var(--sp-4);
+  color: var(--clr-text-muted);
+  cursor: pointer;
+  text-align: center;
+}
+
+.upload-label span {
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.upload-hint {
+  font-size: 0.72rem !important;
+  color: var(--clr-text-muted) !important;
+}
+
+.image-preview-wrap {
+  position: relative;
+  padding: var(--sp-3);
+}
+
+.image-preview {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.remove-image {
+  position: absolute;
+  top: var(--sp-4);
+  right: var(--sp-4);
+  width: 28px;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.resolve-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--clr-border);
+}
+
+.resolve-actions .btn {
+  padding: 10px 20px;
+  font-size: 0.85rem;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

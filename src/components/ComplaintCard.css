@@ -1,0 +1,194 @@
+.complaint-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.complaint-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+
+.complaint-card.priority-high::before { background: var(--clr-high); }
+.complaint-card.priority-medium::before { background: var(--clr-medium); }
+.complaint-card.priority-low::before { background: var(--clr-low); }
+
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.priority-badge.priority-high {
+  background: var(--clr-high-bg);
+  color: var(--clr-high);
+  border: 1px solid var(--clr-high-border);
+}
+
+.priority-badge.priority-medium {
+  background: var(--clr-medium-bg);
+  color: #b45309;
+  border: 1px solid var(--clr-medium-border);
+}
+
+.priority-badge.priority-low {
+  background: var(--clr-low-bg);
+  color: #15803d;
+  border: 1px solid var(--clr-low-border);
+}
+
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #ede9fe, #dbeafe);
+  color: #6d28d9;
+  letter-spacing: 0.03em;
+}
+
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--clr-text);
+  margin-bottom: var(--sp-2);
+  line-height: 1.3;
+}
+
+.card-desc {
+  font-size: 0.82rem;
+  color: var(--clr-text-secondary);
+  line-height: 1.5;
+  margin-bottom: var(--sp-3);
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--clr-text-muted);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--sp-3);
+}
+
+.status-in-progress {
+  background: #eff6ff;
+  color: var(--clr-primary);
+  border: 1px solid var(--clr-primary-100);
+}
+
+.escalation-warning {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  background: #fffbeb;
+  border: 1px solid var(--clr-medium-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #92400e;
+  margin-bottom: var(--sp-3);
+}
+
+.card-actions {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-3);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-sm {
+  font-size: 0.78rem;
+  padding: 6px 14px;
+}
+
+.btn-primary {
+  background: var(--clr-primary);
+  color: white;
+}
+.btn-primary:hover {
+  background: var(--clr-primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--clr-bg);
+  color: var(--clr-text-secondary);
+  border: 1px solid var(--clr-border);
+}
+.btn-secondary:hover {
+  background: var(--clr-primary-50);
+  color: var(--clr-primary);
+  border-color: var(--clr-primary-100);
+}
+
+.btn-warning {
+  background: var(--clr-medium-bg);
+  color: #92400e;
+  border: 1px solid var(--clr-medium-border);
+}
+.btn-warning:hover {
+  background: #fef3c7;
+}
+
+.card-student {
+  font-size: 0.72rem;
+  color: var(--clr-text-muted);
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--clr-border);
+}
