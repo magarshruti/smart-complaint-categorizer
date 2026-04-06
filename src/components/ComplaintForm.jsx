@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { Upload, X, Loader2, Send } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Upload, X, Loader2, Send, Sparkles, Building2, Tag, Zap } from 'lucide-react';
 import { useApp } from '../context/AppContext.jsx';
 import { AREAS } from '../data/seedData';
+import { analyzeComplaint } from '../utils/prioritize';
 import './ComplaintForm.css';
 
 export default function ComplaintForm({ onClose }) {
@@ -13,6 +14,12 @@ export default function ComplaintForm({ onClose }) {
   const [loading, setLoading] = useState(false);
 
   const subCategories = area ? AREAS[area] || [] : [];
+
+  // Live AI analysis preview
+  const analysis = useMemo(() => {
+    if (description.trim().length < 10) return null;
+    return analyzeComplaint(description, area, subCategory);
+  }, [description, area, subCategory]);
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
@@ -84,13 +91,44 @@ export default function ComplaintForm({ onClose }) {
         <label className="form-label">Describe the Issue *</label>
         <textarea
           className="form-textarea"
-          placeholder="Explain the issue in detail so we can prioritize and resolve it faster..."
+          placeholder="Explain the issue in detail so AI can classify and prioritize it automatically..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={5}
           required
         />
       </div>
+
+      {/* Live AI Analysis Preview */}
+      {analysis && (
+        <div className="ai-preview">
+          <div className="ai-preview-header">
+            <Sparkles size={14} />
+            <span>AI Analysis Preview</span>
+          </div>
+          <div className="ai-preview-grid">
+            <div className="ai-preview-item">
+              <Tag size={13} />
+              <span>Category: <strong>{analysis.category}</strong></span>
+            </div>
+            <div className="ai-preview-item">
+              <Building2 size={13} />
+              <span>Routes to: <strong>{analysis.department.name}</strong></span>
+            </div>
+            <div className="ai-preview-item">
+              <span className={`preview-priority priority-${analysis.priority}`}>
+                {analysis.priority === 'high' ? '🔴' : analysis.priority === 'medium' ? '🟡' : '🟢'} {analysis.priority.charAt(0).toUpperCase() + analysis.priority.slice(1)} Priority
+              </span>
+            </div>
+            {analysis.urgency.urgent && (
+              <div className="ai-preview-item urgent-item">
+                <Zap size={13} />
+                <span><strong>⚠️ Marked as Urgent</strong> — detected keyword: &quot;{analysis.urgency.keyword}&quot;</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="form-group">
         <label className="form-label">Upload Image (Optional)</label>

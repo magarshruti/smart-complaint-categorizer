@@ -1,0 +1,115 @@
+.toast-container {
+  position: fixed;
+  bottom: var(--sp-6);
+  right: var(--sp-6);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--sp-3);
+  max-width: 400px;
+  width: 100%;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  background: var(--clr-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--clr-border);
+  pointer-events: auto;
+}
+
+.toast-email {
+  border-left: 4px solid var(--clr-primary);
+}
+
+.toast-success {
+  border-left: 4px solid var(--clr-success);
+}
+
+.toast-warning {
+  border-left: 4px solid var(--clr-warning);
+}
+
+.toast-info {
+  border-left: 4px solid var(--clr-info);
+}
+
+.toast-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toast-email .toast-icon {
+  background: var(--clr-primary-50);
+  color: var(--clr-primary);
+}
+
+.toast-success .toast-icon {
+  background: var(--clr-low-bg);
+  color: var(--clr-success);
+}
+
+.toast-warning .toast-icon {
+  background: var(--clr-medium-bg);
+  color: var(--clr-warning);
+}
+
+.toast-info .toast-icon {
+  background: var(--clr-primary-50);
+  color: var(--clr-info);
+}
+
+.toast-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.toast-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--clr-text);
+}
+
+.toast-msg {
+  font-size: 0.75rem;
+  color: var(--clr-text-secondary);
+  line-height: 1.4;
+}
+
+.toast-close {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--clr-text-muted);
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.toast-close:hover {
+  background: var(--clr-bg);
+  color: var(--clr-text);
+}
+
+@media (max-width: 540px) {
+  .toast-container {
+    right: var(--sp-3);
+    left: var(--sp-3);
+    max-width: none;
+  }
+}

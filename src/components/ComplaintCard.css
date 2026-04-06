@@ -74,6 +74,20 @@
   letter-spacing: 0.03em;
 }
 
+.urgent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  background: var(--clr-high-bg);
+  color: var(--clr-high);
+  border: 1px solid var(--clr-high-border);
+  animation: pulse-high 2s infinite;
+}
+
 .card-title {
   font-size: 0.95rem;
   font-weight: 700;
@@ -87,6 +101,47 @@
   color: var(--clr-text-secondary);
   line-height: 1.5;
   margin-bottom: var(--sp-3);
+}
+
+/* ── Category & Department Routing ── */
+.card-routing {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--sp-3);
+  background: var(--clr-bg);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--sp-3);
+}
+
+.routing-category,
+.routing-dept,
+.routing-email {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--clr-text-secondary);
+}
+
+.routing-category strong,
+.routing-dept strong {
+  color: var(--clr-text);
+}
+
+.routing-dept {
+  color: var(--dept-color, var(--clr-text-secondary));
+}
+
+.routing-dept strong {
+  color: var(--dept-color, var(--clr-text));
+}
+
+.routing-email {
+  font-size: 0.7rem;
+  color: var(--clr-text-muted);
+  padding-left: 19px;
 }
 
 .card-meta {

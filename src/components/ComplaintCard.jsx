@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Clock, MapPin, Tag, AlertTriangle, Play, CheckCircle, RotateCcw, Sparkles } from 'lucide-react';
+import { Clock, MapPin, Tag, AlertTriangle, Play, CheckCircle, RotateCcw, Sparkles, Building2, Zap, Mail } from 'lucide-react';
 import { getTimeAgo, checkEscalation } from '../utils/prioritize';
 import { useApp } from '../context/AppContext.jsx';
 import './ComplaintCard.css';
@@ -44,13 +44,40 @@ export default function ComplaintCard({ complaint, onViewDetails, showActions = 
         </span>
         {complaint.aiPrioritized && (
           <span className="ai-badge">
-            <Sparkles size={12} /> AI Prioritized
+            <Sparkles size={12} /> AI Classified
+          </span>
+        )}
+        {complaint.isUrgent && (
+          <span className="urgent-badge">
+            <Zap size={12} /> Urgent
           </span>
         )}
       </div>
 
       <h3 className="card-title">{complaint.title}</h3>
       <p className="card-desc">{complaint.description.slice(0, 120)}...</p>
+
+      {/* Category & Department Routing */}
+      {complaint.category && (
+        <div className="card-routing">
+          <div className="routing-category">
+            <Tag size={13} />
+            <span>Category: <strong>{complaint.category}</strong></span>
+          </div>
+          {complaint.department && (
+            <div className="routing-dept" style={{ '--dept-color': complaint.department.color || '#64748b' }}>
+              <Building2 size={13} />
+              <span>Routed to: <strong>{complaint.department.name}</strong></span>
+            </div>
+          )}
+          {complaint.department?.email && (
+            <div className="routing-email">
+              <Mail size={12} />
+              <span>{complaint.department.email}</span>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="card-meta">
         <span className="meta-item"><MapPin size={13} /> {complaint.area}</span>

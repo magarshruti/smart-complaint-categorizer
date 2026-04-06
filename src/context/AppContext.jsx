@@ -1,6 +1,6 @@
-import { createContext, useContext, useReducer } from 'react';
+import { createContext, useContext, useReducer, useCallback } from 'react';
 import { seedComplaints, seedFeedPosts } from '../data/seedData';
-import { classifyPriority } from '../utils/prioritize';
+import { analyzeComplaint } from '../utils/prioritize';
 
 const AppContext = createContext();
 
@@ -8,7 +8,11 @@ const initialState = {
   user: null, // { role: 'admin' | 'student', name: string }
   complaints: seedComplaints,
   feedPosts: seedFeedPosts,
+  notifications: [], // toast notifications
+  satisfactionRatings: [4, 5, 3, 4, 5, 4, 3, 5, 4, 4], // seed ratings
 };
+
+let notifId = 0;
 
 function appReducer(state, action) {
   switch (action.type) {
@@ -19,23 +23,54 @@ function appReducer(state, action) {
       return { ...state, user: null };
 
     case 'ADD_COMPLAINT': {
+      const { description, area, subCategory } = action.payload;
+      const analysis = analyzeComplaint(description, area, subCategory);
+
+      const now = new Date().toISOString();
       const newComplaint = {
         ...action.payload,
         id: Date.now().toString(),
         status: 'open',
-        createdAt: new Date().toISOString(),
+        createdAt: now,
         aiPrioritized: true,
-        priority: classifyPriority(action.payload.description, action.payload.subCategory),
+        priority: analysis.priority,
+        category: analysis.category,
+        department: analysis.department,
+        isUrgent: analysis.urgency.urgent,
+        statusHistory: [{ status: 'open', time: now }],
         resolution: null,
       };
-      return { ...state, complaints: [newComplaint, ...state.complaints] };
+
+      // Simulated email notification
+      const emailNotif = {
+        id: ++notifId,
+        type: 'email',
+        title: `📧 Email sent to ${analysis.department.name}`,
+        message: `Complaint "${newComplaint.title}" routed to ${analysis.department.email}`,
+        time: now,
+        category: analysis.category,
+        department: analysis.department,
+      };
+
+      return {
+        ...state,
+        complaints: [newComplaint, ...state.complaints],
+        notifications: [emailNotif, ...state.notifications],
+      };
     }
 
     case 'UPDATE_STATUS': {
+      const now = new Date().toISOString();
       return {
         ...state,
         complaints: state.complaints.map(c =>
-          c.id === action.payload.id ? { ...c, status: action.payload.status } : c
+          c.id === action.payload.id
+            ? {
+                ...c,
+                status: action.payload.status,
+                statusHistory: [...(c.statusHistory || []), { status: action.payload.status, time: now }],
+              }
+            : c
         )
       };
     }
@@ -43,6 +78,7 @@ function appReducer(state, action) {
     case 'RESOLVE_COMPLAINT': {
       const { id, description, image } = action.payload;
       const complaint = state.complaints.find(c => c.id === id);
+      const now = new Date().toISOString();
 
       const newPost = {
         id: `f-${Date.now()}`,
@@ -50,9 +86,11 @@ function appReducer(state, action) {
         title: complaint?.title || 'Resolved Issue',
         description,
         area: complaint?.area || '',
+        category: complaint?.category || 'General',
+        department: complaint?.department?.name || 'General Administration',
         image: image || null,
-        resolvedAt: new Date().toISOString(),
-        resolvedBy: 'Admin - Maintenance Dept.',
+        resolvedAt: now,
+        resolvedBy: `Admin - ${complaint?.department?.name || 'Maintenance Dept.'}`,
         likes: 0,
         likedByUser: false,
         comments: [],
@@ -61,18 +99,34 @@ function appReducer(state, action) {
       return {
         ...state,
         complaints: state.complaints.map(c =>
-          c.id === id ? { ...c, status: 'resolved', resolution: { description, image } } : c
+          c.id === id
+            ? {
+                ...c,
+                status: 'resolved',
+                resolution: { description, image },
+                statusHistory: [...(c.statusHistory || []), { status: 'resolved', time: now }],
+              }
+            : c
         ),
         feedPosts: [newPost, ...state.feedPosts],
       };
     }
 
     case 'RESUBMIT_COMPLAINT': {
+      const now = new Date().toISOString();
       return {
         ...state,
         complaints: state.complaints.map(c =>
           c.id === action.payload.id
-            ? { ...c, priority: 'high', status: 'open', createdAt: new Date().toISOString(), aiPrioritized: true }
+            ? {
+                ...c,
+                priority: 'high',
+                isUrgent: true,
+                status: 'open',
+                createdAt: now,
+                aiPrioritized: true,
+                statusHistory: [...(c.statusHistory || []), { status: 're-submitted', time: now }, { status: 'open', time: now }],
+              }
             : c
         )
       };
@@ -107,6 +161,27 @@ function appReducer(state, action) {
             ? { ...p, comments: [...p.comments, newComment] }
             : p
         )
+      };
+    }
+
+    case 'ADD_NOTIFICATION': {
+      return {
+        ...state,
+        notifications: [{ ...action.payload, id: ++notifId }, ...state.notifications],
+      };
+    }
+
+    case 'DISMISS_NOTIFICATION': {
+      return {
+        ...state,
+        notifications: state.notifications.filter(n => n.id !== action.payload.id),
+      };
+    }
+
+    case 'ADD_SATISFACTION_RATING': {
+      return {
+        ...state,
+        satisfactionRatings: [...state.satisfactionRatings, action.payload.rating],
       };
     }
 

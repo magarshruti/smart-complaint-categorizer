@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, AlertCircle } from 'lucide-react';
+import { Sparkles, AlertCircle, Building2, Eye } from 'lucide-react';
 import Navbar from '../components/Navbar.jsx';
 import PriorityBox from '../components/PriorityBox.jsx';
 import ComplaintCard from '../components/ComplaintCard.jsx';
 import Modal from '../components/Modal.jsx';
 import ResolveForm from '../components/ResolveForm.jsx';
+import StatusTracker from '../components/StatusTracker.jsx';
+import SatisfactionScore from '../components/SatisfactionScore.jsx';
+import SimilarComplaints from '../components/SimilarComplaints.jsx';
 import { useApp } from '../context/AppContext.jsx';
 import './AdminDashboard.css';
 
@@ -13,6 +16,8 @@ export default function AdminDashboard() {
   const { state } = useApp();
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [showResolveModal, setShowResolveModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [detailComplaint, setDetailComplaint] = useState(null);
 
   const active = state.complaints.filter(c => c.status !== 'resolved');
 
@@ -20,9 +25,48 @@ export default function AdminDashboard() {
   const medium = active.filter(c => c.priority === 'medium');
   const low = active.filter(c => c.priority === 'low');
 
+  // Count by category
+  const categoryCounts = {};
+  active.forEach(c => {
+    const cat = c.category || 'General';
+    categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+  });
+
   const handleViewDetails = (complaint) => {
     setSelectedComplaint(complaint);
     setShowResolveModal(true);
+  };
+
+  const handleResolveGroup = (group) => {
+    // In a real app we'd open a modal to enter a common resolution note
+    // For MVP, auto-resolve all with a generic note
+    const confirm = window.confirm(`Resolve all ${group.count} similar complaints in this group?`);
+    if (!confirm) return;
+
+    group.linkedComplaints.forEach(c => {
+      dispatch({
+        type: 'RESOLVE_COMPLAINT',
+        payload: {
+          id: c.id,
+          description: `Batch resolved (Similar issue). Root cause addressed for ${group.count} related complaints.`,
+          image: null
+        }
+      });
+      // also throw a toast for each one or just one
+    });
+    dispatch({
+      type: 'ADD_NOTIFICATION',
+      payload: {
+        type: 'success',
+        title: 'Batch Resolution Complete',
+        message: `Successfully resolved ${group.count} similar complaints: ${group.subCategory}`
+      }
+    });
+  };
+
+  const handleViewTracking = (complaint) => {
+    setDetailComplaint(complaint);
+    setShowDetailsModal(true);
   };
 
   return (
@@ -39,7 +83,7 @@ export default function AdminDashboard() {
             <div>
               <h1 className="dash-title">Admin Dashboard</h1>
               <p className="dash-subtitle">
-                Manage and resolve campus complaints
+                Manage and resolve campus complaints — AI auto-classifies &amp; routes
               </p>
             </div>
             <div className="dash-stats">
@@ -49,10 +93,33 @@ export default function AdminDashboard() {
               </div>
               <div className="stat-pill stat-ai">
                 <Sparkles size={14} />
-                <span>AI Prioritized</span>
+                <span>AI Classified</span>
               </div>
             </div>
           </motion.div>
+
+          {/* Department routing summary */}
+          <motion.div
+            className="dept-summary"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
+            <h3 className="dept-summary-title">
+              <Building2 size={16} /> Department Routing Summary
+            </h3>
+            <div className="dept-chips">
+              {Object.entries(categoryCounts).map(([cat, count]) => (
+                <div key={cat} className="dept-chip">
+                  <span className="dept-chip-name">{cat}</span>
+                  <span className="dept-chip-count">{count}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <SatisfactionScore />
+          <SimilarComplaints complaints={active} onResolveGroup={handleResolveGroup} />
 
           <div className="priority-sections">
             <PriorityBox priority="high" count={high.length}>
@@ -103,6 +170,7 @@ export default function AdminDashboard() {
         </div>
       </main>
 
+      {/* Resolve Modal */}
       <Modal
         isOpen={showResolveModal}
         onClose={() => { setShowResolveModal(false); setSelectedComplaint(null); }}
@@ -110,10 +178,25 @@ export default function AdminDashboard() {
         size="md"
       >
         {selectedComplaint && (
-          <ResolveForm
-            complaint={selectedComplaint}
-            onClose={() => { setShowResolveModal(false); setSelectedComplaint(null); }}
-          />
+          <>
+            <StatusTracker complaint={selectedComplaint} />
+            <ResolveForm
+              complaint={selectedComplaint}
+              onClose={() => { setShowResolveModal(false); setSelectedComplaint(null); }}
+            />
+          </>
+        )}
+      </Modal>
+
+      {/* Detail/Tracking Modal */}
+      <Modal
+        isOpen={showDetailsModal}
+        onClose={() => { setShowDetailsModal(false); setDetailComplaint(null); }}
+        title="Complaint Details & Tracking"
+        size="md"
+      >
+        {detailComplaint && (
+          <StatusTracker complaint={detailComplaint} />
         )}
       </Modal>
     </div>
